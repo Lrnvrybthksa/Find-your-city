@@ -207,8 +207,7 @@ footer{background:#0a0906;border-top-color:var(--rule)}
 .compare-person{background:var(--cream2);border-color:var(--rule)}
 .compare-upload-zone{border-color:var(--rule)}
 .compare-arch-badge{border-color:var(--rule)}
-.city-tooltip{background:#1e1a15;border:1px solid rgba(240,235,226,.12)}
-.city-tooltip::after{border-top-color:#1e1a15}
+/* city tooltip handled by main CSS block above */
 
 /* phase intro */
 #phase-intro .qi-btn{background:var(--accent);color:#fff}
@@ -1138,20 +1137,18 @@ footer{
 .c-tag:not(.avoid):hover{opacity:.85;transform:translateY(-1px);transition:all .15s}
 .city-tooltip{
   display:none;
-  position:absolute;
-  bottom:calc(100% + 8px);
-  left:50%;transform:translateX(-50%);
+  position:fixed;
   background:#1e1a15;
   border:1px solid rgba(240,235,226,.12);
   border-radius:6px;
   padding:10px 14px;
-  width:220px;
-  z-index:200;
+  width:230px;
+  z-index:9999;
   pointer-events:none;
-  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
 }
 .city-tooltip::after{
-  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  content:'';position:absolute;top:100%;left:20px;
   border:6px solid transparent;border-top-color:#1e1a15;
 }
 .city-tooltip-name{
@@ -1165,13 +1162,8 @@ footer{
 .city-tooltip-note{
   font-size:.75rem;font-weight:300;color:rgba(240,235,226,.65);line-height:1.5;
 }
-.c-tag:not(.avoid):hover .city-tooltip,
-.c-tag.tapped .city-tooltip{display:block;}
-/* keep tooltip inside card on small screens */
-@media(max-width:500px){
-  .city-tooltip{left:0;transform:none;width:200px}
-  .city-tooltip::after{left:20px;transform:none}
-}
+.city-tooltip.visible{display:block}
+/* remove old hover CSS triggers — JS handles positioning now */
 
 .res-actions{
   display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
@@ -1218,6 +1210,90 @@ footer{
 }
 .arch-meaning-desc{font-size:.78rem;font-weight:300;color:var(--muted);line-height:1.55}
 @media(max-width:560px){.arch-meaning{grid-template-columns:1fr}}
+
+/* International Cities panel */
+#intl-cities-panel{
+  display:none;position:fixed;inset:0;z-index:600;
+  background:var(--cream);overflow-y:auto;
+  animation:fadeIn .25s ease;
+}
+#intl-cities-panel.open{display:block}
+
+/* US Cities panel */
+#us-cities-panel{
+  display:none;position:fixed;inset:0;z-index:600;
+  background:var(--cream);overflow-y:auto;
+  animation:fadeIn .25s ease;
+}
+#us-cities-panel.open{display:block}
+.us-arch-card{
+  border:1px solid var(--rule);border-radius:8px;
+  overflow:hidden;margin-bottom:10px;
+}
+.us-arch-header{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 22px;cursor:pointer;
+  transition:background .15s;user-select:none;
+  background:var(--cream2);
+}
+.us-arch-header:hover{background:#201d19}
+.us-arch-header.expanded{background:#201d19;border-bottom:1px solid var(--rule)}
+.us-arch-emoji{font-size:1.4rem;flex-shrink:0}
+.us-arch-name{font-family:var(--ff-serif);font-size:1rem;font-weight:500;color:var(--ink)}
+.us-arch-tagline{font-size:.73rem;font-weight:300;color:var(--muted);margin-top:2px}
+.us-arch-chevron{margin-left:auto;color:var(--muted2);font-size:.8rem;transition:transform .2s;flex-shrink:0}
+.us-arch-header.expanded .us-arch-chevron{transform:rotate(180deg)}
+.us-arch-body{display:none;padding:20px 22px 24px;background:var(--cream)}
+.us-arch-body.open{display:block}
+.us-arch-body-desc{
+  font-size:.82rem;font-weight:300;color:var(--muted);
+  line-height:1.65;margin-bottom:18px;
+  padding-bottom:16px;border-bottom:1px solid var(--rule);
+}
+.us-city-section{margin-bottom:14px}
+.us-city-label{
+  font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px;
+}
+.us-city-tags{display:flex;flex-wrap:wrap;gap:6px}
+.us-filter-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:28px}
+.us-filter-pill{
+  padding:6px 14px;border-radius:99px;border:1px solid var(--rule);
+  background:none;font-family:var(--ff-sans);font-size:.74rem;
+  font-weight:400;color:var(--muted);cursor:pointer;transition:all .15s;
+}
+.us-filter-pill:hover{border-color:var(--accent);color:var(--accent)}
+.us-filter-pill.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.us-filter-all{border-color:rgba(240,235,226,.3);color:var(--muted)}
+.us-filter-all.on{background:var(--ink);border-color:var(--ink);color:var(--cream)}
+
+
+/* US city tag colors */
+.us-tag-discover,
+.us-tag-anchor,
+.us-tag-reconsider{
+  font-size:.77rem;padding:5px 14px;border-radius:2px;
+  position:relative;cursor:pointer;
+  display:inline-block;
+  transition:all .15s;
+}
+.us-tag-discover{
+  border:1px solid rgba(74,222,128,.45);
+  color:rgba(74,222,128,.95);
+  background:rgba(74,222,128,.06);
+}
+.us-tag-discover:hover{opacity:.85;transform:translateY(-1px)}
+.us-tag-reconsider{
+  border:1px solid rgba(255,107,107,.5);
+  color:#ff6b6b;
+  background:rgba(255,107,107,.07);
+}
+.us-tag-anchor{
+  border:1px solid rgba(240,235,226,.2);
+  color:rgba(240,235,226,.65);
+  background:rgba(240,235,226,.04);
+}
+.us-tag-anchor:hover{opacity:.85;transform:translateY(-1px)}
+/* show tooltip on hover or tap for all tag types — handled by JS */
 
 /* compare panel */
 #compare-panel{
@@ -1397,6 +1473,20 @@ footer{
             <span class="menu-item-sub">What Primary, Secondary & Third mean</span>
           </span>
         </button>
+        <button class="menu-item" onclick="closeDrawer();openUSCities()">
+          <span class="menu-icon">🇺🇸</span>
+          <span class="menu-item-text">
+            <span class="menu-item-title">US Cities by Archetype</span>
+            <span class="menu-item-sub">Find your kind of city across America</span>
+          </span>
+        </button>
+        <button class="menu-item" onclick="closeDrawer();openIntlCities()">
+          <span class="menu-icon">🌍</span>
+          <span class="menu-item-text">
+            <span class="menu-item-title">International Cities by Archetype</span>
+            <span class="menu-item-sub">Discover cities around the world that fit you</span>
+          </span>
+        </button>
         <button class="menu-item" onclick="drawerNav('quotes')">
           <span class="menu-icon">💬</span>
           <span class="menu-item-text">
@@ -1417,6 +1507,14 @@ footer{
 
       <div class="menu-section">
         <p class="menu-section-label">Coming Soon</p>
+        <button class="menu-item" style="opacity:.5;cursor:default">
+          <span class="menu-icon">🗺️</span>
+          <span class="menu-item-text">
+            <span class="menu-item-title">US Cities by State</span>
+            <span class="menu-item-sub">Best cities per archetype in every US state</span>
+          </span>
+          <span class="menu-item-badge">Soon</span>
+        </button>
         <button class="menu-item" style="opacity:.5;cursor:default">
           <span class="menu-icon">🏙️</span>
           <span class="menu-item-text">
@@ -1822,6 +1920,38 @@ footer{
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ═══ INTERNATIONAL CITIES PANEL ═════════════ -->
+<div id="intl-cities-panel">
+  <div class="import-panel-nav">
+    <span class="import-panel-nav-title">🌍 International Cities by Archetype</span>
+    <button class="import-panel-close" onclick="closeIntlCities()">← Back</button>
+  </div>
+  <div class="import-panel-body">
+    <p style="font-family:var(--ff-serif);font-size:clamp(1.4rem,3vw,2rem);font-weight:400;color:var(--ink);margin-bottom:8px">Discover the world cities built for you</p>
+    <p style="font-size:.88rem;font-weight:300;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:620px">Browse all 12 archetypes and their best matching cities around the world — from overlooked gems to familiar anchors. Not sure which archetype fits you? <button onclick="closeIntlCities();openQuiz()" style="background:none;border:none;color:var(--accent);font-family:var(--ff-sans);font-size:.88rem;font-weight:500;cursor:pointer;text-decoration:underline;padding:0">Take the quiz first.</button></p>
+    <div id="intlCitiesFilter" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:32px"></div>
+    <div id="intlCitiesGrid"></div>
+  </div>
+</div>
+
+<!-- ═══ US CITIES PANEL ══════════════════════════ -->
+<div id="us-cities-panel">
+  <div class="import-panel-nav">
+    <span class="import-panel-nav-title">🇺🇸 US Cities by Archetype</span>
+    <button class="import-panel-close" onclick="closeUSCities()">← Back</button>
+  </div>
+  <div class="import-panel-body">
+    <p style="font-family:var(--ff-serif);font-size:clamp(1.4rem,3vw,2rem);font-weight:400;color:var(--ink);margin-bottom:8px">Find your kind of city across America</p>
+    <p style="font-size:.88rem;font-weight:300;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:620px">Browse all 12 archetypes and their best matching US cities — 10 cities to discover and 5 to reconsider for each. Not sure which archetype fits you? <button onclick="closeUSCities();openQuiz()" style="background:none;border:none;color:var(--accent);font-family:var(--ff-sans);font-size:.88rem;font-weight:500;cursor:pointer;text-decoration:underline;padding:0">Take the quiz to find out.</button></p>
+
+    <!-- archetype filter pills -->
+    <div id="usCitiesFilter" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:32px"></div>
+
+    <!-- results grid -->
+    <div id="usCitiesGrid"></div>
   </div>
 </div>
 
@@ -2787,17 +2917,76 @@ function cityTag(city, cls){
   return `<span class="c-tag ${cls}" ${tap}>${city}${tooltip}</span>`;
 }
 
-function toggleCityTip(e, el){
-  e.preventDefault();
-  // close all others first
-  document.querySelectorAll('.c-tag.tapped').forEach(t=>{ if(t!==el) t.classList.remove('tapped'); });
-  el.classList.toggle('tapped');
+/* ══════════════════════════════════════════════
+   TOOLTIP SYSTEM — fixed position, never clipped
+══════════════════════════════════════════════ */
+let _activeTooltipEl = null;
+
+function showTooltip(el){
+  const tip = el.querySelector('.city-tooltip');
+  if(!tip) return;
+  hideAllTooltips();
+  const rect = el.getBoundingClientRect();
+  const tipW = 230;
+  const margin = 10;
+  // position above the tag
+  let top = rect.top - 8;
+  let left = rect.left + rect.width/2 - tipW/2;
+  // clamp horizontally within viewport
+  left = Math.max(margin, Math.min(left, window.innerWidth - tipW - margin));
+  // if too close to top flip below
+  if(top - 120 < 0){
+    tip.style.top = (rect.bottom + 8)+'px';
+    tip.style.left = left+'px';
+    tip.style.transform = 'none';
+    // flip arrow to top
+    tip.style.setProperty('--arrow-top','0');
+    tip.querySelector('::after');
+    tip.classList.add('flip');
+  } else {
+    top = rect.top - 8;
+    tip.style.top = '';
+    tip.style.bottom = (window.innerHeight - rect.top + 8)+'px';
+    tip.style.left = left+'px';
+    tip.style.transform = 'none';
+    tip.classList.remove('flip');
+  }
+  tip.classList.add('visible');
+  _activeTooltipEl = el;
 }
 
-// close tapped tooltips when tapping elsewhere
-document.addEventListener('touchstart', e=>{
-  if(!e.target.closest('.c-tag')) document.querySelectorAll('.c-tag.tapped').forEach(t=>t.classList.remove('tapped'));
+function hideAllTooltips(){
+  document.querySelectorAll('.city-tooltip.visible').forEach(t=>{
+    t.classList.remove('visible');
+    t.style.bottom=''; t.style.top=''; t.style.left='';
+  });
+  if(_activeTooltipEl){ _activeTooltipEl.classList.remove('tapped'); _activeTooltipEl=null; }
+}
+
+// desktop hover
+document.addEventListener('mouseover', e=>{
+  const tag = e.target.closest('.c-tag:not(.avoid), .us-tag-discover, .us-tag-anchor, .us-tag-reconsider');
+  if(tag) showTooltip(tag);
 });
+document.addEventListener('mouseout', e=>{
+  const tag = e.target.closest('.c-tag:not(.avoid), .us-tag-discover, .us-tag-anchor, .us-tag-reconsider');
+  if(tag && !tag.contains(e.relatedTarget)) hideAllTooltips();
+});
+
+// mobile tap
+function toggleCityTip(e, el){
+  e.preventDefault();
+  e.stopPropagation();
+  if(_activeTooltipEl === el){ hideAllTooltips(); return; }
+  showTooltip(el);
+  el.classList.add('tapped');
+}
+
+document.addEventListener('touchstart', e=>{
+  if(!e.target.closest('.c-tag, .us-tag-discover, .us-tag-anchor, .us-tag-reconsider')){
+    hideAllTooltips();
+  }
+}, {passive:true});
 
 
 let lastResultData = null;
@@ -3007,7 +3196,772 @@ Worth Reconsidering: ${match.avoid.join(', ')}`;
     });
 }
 
+/* ══════════════════════════════════════════════
+   US CITIES DATA & FUNCTIONS
+══════════════════════════════════════════════ */
+const US_CITIES = {
+  AI:{
+    tagline:"Cultural depth, indie scenes, walkable neighborhoods",
+    desc:"You thrive in US cities with layered arts scenes, independent bookstores, café culture, and a creative class that takes ideas seriously. Affordable enough to actually make things.",
+    discover:["Asheville NC","Providence RI","Savannah GA","Iowa City IA","Marfa TX","Taos NM","Bisbee AZ","Ithaca NY","Yellow Springs OH","Hudson NY","Brattleboro VT","Oberlin OH","Northampton MA","Paducah KY","Eureka Springs AR"],
+    anchor:["Portland OR","Austin TX","Philadelphia PA","Chicago IL","New Orleans LA"],
+    reconsider_desc:"These cities tend to prioritize comfort, consumption, and convenience over creativity. They lack the cultural infrastructure — independent bookstores, indie venues, working artists — that keeps an Artistic Intellectual engaged. You may find them fine to visit but slowly deadening to actually live in.",
+    reconsider:["Las Vegas NV","Scottsdale AZ","Orlando FL","Plano TX","Gilbert AZ","Frisco TX","Chandler AZ","Henderson NV","The Woodlands TX","Irvine CA"]
+  },
+  CC:{
+    tagline:"Coastal living, creative energy, outdoor lifestyle",
+    desc:"You need US cities where the ocean is a daily presence, the culture is relaxed but creative, and the outdoor lifestyle is built into everything — not just a weekend thing.",
+    discover:["Santa Cruz CA","Astoria OR","Fernandina Beach FL","Rockland ME","Port Townsend WA","Ventura CA","Apalachicola FL","Cannon Beach OR","Gloucester MA","San Luis Obispo CA","Beaufort NC","Sitka AK","Marathon FL","Cambria CA","Islamorada FL"],
+    anchor:["San Diego CA","Santa Barbara CA","Portland ME","Charleston SC","Wilmington NC"],
+    reconsider_desc:"These are landlocked, climate-challenged, or car-dependent cities where the coastal lifestyle you need simply doesn't exist. No salt air, no ocean energy, no outdoor culture built around water — the environment itself works against you from day one.",
+    reconsider:["Phoenix AZ","Dallas TX","Indianapolis IN","Columbus OH","Memphis TN","Lubbock TX","Amarillo TX","Wichita KS","Oklahoma City OK","Omaha NE"]
+  },
+  AM:{
+    tagline:"Opportunity, ambition, fast-moving economies",
+    desc:"You need US cities where ambition is rewarded, networks are dense, startups are everywhere, and the pace matches your drive. Cities still climbing — not peaked.",
+    discover:["Austin TX","Miami FL","Nashville TN","Denver CO","Raleigh NC","Salt Lake City UT","Charlotte NC","Columbus OH","Indianapolis IN","Pittsburgh PA","Huntsville AL","Boise ID","Richmond VA","Greenville SC","Des Moines IA"],
+    anchor:["New York NY","San Francisco CA","Seattle WA","Boston MA","Chicago IL"],
+    reconsider_desc:"These cities have either peaked economically, face serious structural challenges, or lack the startup density and ambitious networks that fuel your growth. Ambition needs friction and opportunity — these places don't offer enough of either.",
+    reconsider:["Scranton PA","Stockton CA","Flint MI","Gary IN","Youngstown OH","Dayton OH","Rockford IL","Shreveport LA","Beaumont TX","Peoria IL"]
+  },
+  RN:{
+    tagline:"Nature access, outdoor lifestyle, mountain or desert towns",
+    desc:"You need topography in your daily life. US cities where you can be in the wilderness in 20 minutes, the air is clean, and the landscape is part of your everyday identity.",
+    discover:["Bend OR","Flagstaff AZ","Bozeman MT","Durango CO","Missoula MT","Jackson WY","Brevard NC","Sisters OR","Steamboat Springs CO","Prescott AZ","Whitefish MT","Hilo HI","Driggs ID","Crested Butte CO","Hood River OR"],
+    anchor:["Asheville NC","Boulder CO","Anchorage AK","Spokane WA","Fort Collins CO"],
+    reconsider_desc:"These are flat, humid, and nature-starved cities where the landscape actively works against you. No mountains, no trails within reach, no dramatic scenery to restore you — just urban sprawl and heat. The daily environment you need to feel grounded simply isn't here.",
+    reconsider:["Houston TX","New Orleans LA","Miami FL","Memphis TN","Baton Rouge LA","Beaumont TX","Corpus Christi TX","Mobile AL","Galveston TX","New Orleans LA"]
+  },
+  UI:{
+    tagline:"Universities, intellectual culture, research cities",
+    desc:"You thrive in US cities built around universities — where people read for fun, debates happen in coffee shops, and the density of curious people per block is unusually high.",
+    discover:["Ann Arbor MI","Madison WI","Burlington VT","Chapel Hill NC","Charlottesville VA","Iowa City IA","Eugene OR","Bloomington IN","Oberlin OH","Ithaca NY","Lawrence KS","Oxford MS","Northampton MA","Gainesville FL","Missoula MT"],
+    anchor:["Cambridge MA","New Haven CT","Berkeley CA","Evanston IL","Princeton NJ"],
+    reconsider_desc:"These cities have built their identities entirely around tourism, entertainment, or seasonal recreation — none of which require or sustain the intellectual community you need. There's no university anchor, no debate culture, no reason for the kind of people you're energized by to stay.",
+    reconsider:["Las Vegas NV","Virginia Beach VA","Myrtle Beach SC","Branson MO","Biloxi MS","Panama City Beach FL","Pigeon Forge TN","Gatlinburg TN","Kissimmee FL","Daytona Beach FL"]
+  },
+  RA:{
+    tagline:"Historic beauty, food culture, walkable old towns",
+    desc:"You're drawn to US cities where the built environment tells a story — historic architecture, exceptional food culture, and a pace that respects beauty over efficiency.",
+    discover:["Savannah GA","Charleston SC","New Orleans LA","Santa Fe NM","Annapolis MD","Natchez MS","Beaufort SC","Galveston TX","Fredericksburg TX","Lexington VA","Port Townsend WA","Cape May NJ","Edenton NC","Bardstown KY","Woodstock VT"],
+    anchor:["San Antonio TX","Boston MA","Philadelphia PA","Savannah GA","New Orleans LA"],
+    reconsider_desc:"These are cities built fast and built new — sprawling suburban development with no architectural heritage, no historic identity, and no sense that anything predates the last 30 years. Beauty and depth require time, and these places haven't had any.",
+    reconsider:["Phoenix AZ","Las Vegas NV","Houston TX","Tempe AZ","Aurora CO","Chandler AZ","North Las Vegas NV","Mesquite TX","League City TX","Pearland TX"]
+  },
+  EC:{
+    tagline:"Underground scenes, creative flux, affordable cities",
+    desc:"You need US cities still in flux — where artists and weirdos can afford to exist, the underground hasn't been fully commodified, and something interesting is always happening.",
+    discover:["Detroit MI","Baltimore MD","New Orleans LA","Kansas City MO","Providence RI","Richmond VA","Tucson AZ","Albuquerque NM","Akron OH","Memphis TN","Gary IN","Pittsburgh PA","Youngstown OH","Braddock PA","East Nashville TN"],
+    anchor:["Chicago IL","Philadelphia PA","Los Angeles CA","Brooklyn NY","Atlanta GA"],
+    reconsider_desc:"These are master-planned, highly polished, safety-optimized suburbs where nothing is left to chance — and nothing interesting happens by accident. The Experimental Creative needs friction, affordability, and unfinished edges. These places have been sanded smooth.",
+    reconsider:["Scottsdale AZ","Plano TX","Frisco TX","Irvine CA","Naperville IL","Carmel IN","Overland Park KS","Sugar Land TX","Thousand Oaks CA","Cary NC"]
+  },
+  SA:{
+    tagline:"Research universities, precision, intellectual rigor",
+    desc:"You work best in US cities where excellence is the standard — dense with research institutions, highly educated populations, and cultures that reward careful thinking.",
+    discover:["Cambridge MA","Princeton NJ","Ann Arbor MI","Ithaca NY","New Haven CT","Evanston IL","Hanover NH","Berkeley CA","Palo Alto CA","Amherst MA","Pasadena CA","Stanford CA","College Station TX","State College PA","Corvallis OR"],
+    anchor:["Boston MA","San Francisco CA","Washington DC","Seattle WA","Chicago IL"],
+    reconsider_desc:"These cities are built entirely around leisure, entertainment, or seasonal tourism with no research infrastructure, no university culture, and no critical mass of people engaged in rigorous intellectual work. The environment actively discourages the kind of focused, serious output you need.",
+    reconsider:["Las Vegas NV","Myrtle Beach SC","Branson MO","Panama City Beach FL","Pigeon Forge TN","Gatlinburg TN","Kissimmee FL","Ocean City MD","Virginia Beach VA","Daytona Beach FL"]
+  },
+  SS:{
+    tagline:"Warm weather, social energy, outdoor dining year-round",
+    desc:"You need warmth and social buzz — US cities where the weather keeps people outside, strangers become friends easily, and the energy of the streets feeds you daily.",
+    discover:["Miami FL","San Diego CA","New Orleans LA","Savannah GA","Key West FL","Honolulu HI","Fort Lauderdale FL","Clearwater FL","St Pete FL","San Antonio TX","Pensacola FL","Delray Beach FL","Naples FL","Scottsdale AZ","Tempe AZ"],
+    anchor:["Austin TX","Charleston SC","Tampa FL","Phoenix AZ","Jacksonville FL"],
+    reconsider_desc:"These cities spend a significant portion of the year cold, gray, and driving people indoors. For someone whose energy depends on warmth, sunshine, and outdoor social life, the climate alone creates a structural disadvantage that no amount of good restaurants or culture can fully overcome.",
+    reconsider:["Seattle WA","Portland OR","Minneapolis MN","Milwaukee WI","Buffalo NY","Cleveland OH","Detroit MI","Duluth MN","Anchorage AK","Burlington VT"]
+  },
+  QO:{
+    tagline:"Beautiful, unhurried, walkable smaller cities",
+    desc:"You're drawn to US cities beautiful enough to reward attention but unhurried enough to let you think. Small enough to feel human, rich enough in culture to stay.",
+    discover:["Santa Fe NM","Taos NM","Carmel CA","Marfa TX","Woodstock NY","Northampton MA","Port Townsend WA","Bisbee AZ","Ojai CA","Brattleboro VT","Ashland OR","Beaufort SC","Sedona AZ","Sausalito CA","Saugatuck MI"],
+    anchor:["Asheville NC","Burlington VT","Santa Barbara CA","Savannah GA","Charleston SC"],
+    reconsider_desc:"These are overwhelming, fast-paced, or aesthetically blunt cities that make quiet observation nearly impossible. The scale, noise, and relentless stimulation don't leave room for the stillness and noticing that recharges you — you'd spend your energy surviving the environment rather than absorbing it.",
+    reconsider:["New York NY","Los Angeles CA","Las Vegas NV","Atlanta GA","Houston TX","Dallas TX","Phoenix AZ","Chicago IL","Miami FL","Orlando FL"]
+  },
+  GC:{
+    tagline:"Tight-knit communities, neighborhood identity, human scale",
+    desc:"You want a US city where people know your name at the farmers market — culturally alive but small enough to feel like a real community, not just a population.",
+    discover:["Burlington VT","Missoula MT","Bellingham WA","Eau Claire WI","Traverse City MI","Fort Collins CO","Brevard NC","Flagstaff AZ","Lawrence KS","Bozeman MT","Arcata CA","Brattleboro VT","Decorah IA","Northfield MN","Yellow Springs OH"],
+    anchor:["Asheville NC","Portland OR","Boulder CO","Santa Fe NM","Chattanooga TN"],
+    reconsider_desc:"These megacities and fast-growing metros tend to atomize rather than connect — the scale works against the neighborhood-level belonging you need. You can live in them for years and never know your neighbors. Community here requires fighting the urban form, not being supported by it.",
+    reconsider:["New York NY","Los Angeles CA","Houston TX","Phoenix AZ","Las Vegas NV","Dallas TX","Atlanta GA","Chicago IL","Miami FL","Charlotte NC"]
+  },
+  LS:{
+    tagline:"Prestige, wealth concentration, world-class infrastructure",
+    desc:"You want US cities where ambition is visible and rewarded — the best restaurants, networks, buildings, and opportunities are within reach and the stakes feel real.",
+    discover:["New York NY","San Francisco CA","Miami FL","Los Angeles CA","Chicago IL","Boston MA","Washington DC","Seattle WA","Houston TX","Dallas TX","Palo Alto CA","Greenwich CT","Aspen CO","Palm Beach FL","Newport Beach CA"],
+    anchor:["Austin TX","Nashville TN","Denver CO","Atlanta GA","Charlotte NC"],
+    reconsider_desc:"These cities lack the wealth concentration, prestige networks, world-class infrastructure, and high-stakes environments that match your ambitions. They may be perfectly livable places, but the ceiling is low — the opportunities, connections, and lifestyle benchmarks you're aiming for simply aren't accessible here.",
+    reconsider:["Branson MO","Gatlinburg TN","Pigeon Forge TN","Gary IN","Flint MI","Youngstown OH","Scranton PA","Stockton CA","Dayton OH","Rockford IL"]
+  }
+};
+
+
+const US_CITY_INFO = {
+  // AI
+  "Asheville NC":{"note":"Blue Ridge Mountain arts city with a thriving indie music scene and farm-to-table food culture"},
+  "Providence RI":{"note":"RISD and Brown University drive a dense creative and intellectual scene in a small walkable city"},
+  "Savannah GA":{"note":"Spanish-moss streets, SCAD art school, and a walkable historic district with genuine Southern character"},
+  "Iowa City IA":{"note":"UNESCO City of Literature — one of the most literary small cities in America"},
+  "Marfa TX":{"note":"Remote West Texas desert art outpost — Chinati Foundation, minimalism, and wide open skies"},
+  "Taos NM":{"note":"High desert arts colony with a 1,000-year-old pueblo, adobe architecture, and a long artist tradition"},
+  "Bisbee AZ":{"note":"Former copper mining town turned arts community perched on a hillside in the Mule Mountains"},
+  "Ithaca NY":{"note":"Gorges, waterfalls, Cornell and Ithaca College — deeply intellectual with a progressive community feel"},
+  "Yellow Springs OH":{"note":"Tiny counterculture village in Ohio with Antioch College, independent spirit, and surprising depth"},
+  "Hudson NY":{"note":"Hudson Valley river town that became a destination for NYC creatives seeking space and affordability"},
+  "Brattleboro VT":{"note":"Vermont's most bohemian small town — indie bookstores, cider bars, and a strong arts community"},
+  "Oberlin OH":{"note":"One of America's most progressive small college towns with a world-class conservatory"},
+  "Northampton MA":{"note":"Pioneer Valley arts hub — known as NoHo, dense with musicians, writers, and academics"},
+  "Paducah KY":{"note":"UNESCO Creative City of Crafts and Folk Art on the Ohio River — surprisingly vibrant for its size"},
+  "Eureka Springs AR":{"note":"Victorian hillside arts colony in the Ozarks with an eclectic architecture and creative community"},
+  // CC
+  "Santa Cruz CA":{"note":"Surfer-meets-intellectual beach town south of San Francisco with UCSC and a strong counterculture"},
+  "Astoria OR":{"note":"Victorian fishing town at the mouth of the Columbia River — moody, creative, and genuinely undiscovered"},
+  "Fernandina Beach FL":{"note":"Historic island town on Amelia Island — shrimping boats, Victorian houses, and unspoiled beaches"},
+  "Rockland ME":{"note":"Working waterfront town in midcoast Maine with world-class lobster and a growing arts scene"},
+  "Port Townsend WA":{"note":"Victorian seaport at the tip of the Olympic Peninsula — wooden boats, artists, and dramatic water views"},
+  "Ventura CA":{"note":"Underrated Southern California beach city between LA and Santa Barbara with authentic surf culture"},
+  "Apalachicola FL":{"note":"Tiny Panhandle oyster town on a pristine bay — the most charming small coastal town in Florida"},
+  "Cannon Beach OR":{"note":"Oregon's iconic Haystack Rock beach town — moody Pacific coast, galleries, and good coffee"},
+  "Gloucester MA":{"note":"America's oldest fishing port north of Boston with a raw Atlantic character and working waterfront"},
+  "San Luis Obispo CA":{"note":"Cal Poly college town midway between LA and SF with perfect weather and a walkable downtown"},
+  "Beaufort NC":{"note":"Tiny crystal coast town with wild horses on the barrier islands and a genuine maritime character"},
+  "Sitka AK":{"note":"Remote Southeast Alaska island town surrounded by mountains, ocean, and Tlingit cultural heritage"},
+  "Marathon FL":{"note":"Mid-Keys town with world-class diving, boating, and a laid-back conch community feel"},
+  "Cambria CA":{"note":"Coastal village on the dramatic Big Sur edge of the California coast — pines, sea otters, and quiet"},
+  "Islamorada FL":{"note":"Sportfishing capital of the world in the Upper Keys with stunning sunsets and a boating culture"},
+  // AM
+  "Austin TX":{"note":"Tech and music capital of Texas — fastest-growing major US city with a warm climate and startup density"},
+  "Miami FL":{"note":"International business hub at the crossroads of North and Latin America with a subtropical energy"},
+  "Nashville TN":{"note":"Beyond country music — a fast-growing tech and healthcare hub with major investment and young talent"},
+  "Denver CO":{"note":"Rocky Mountain city with a booming economy, outdoor lifestyle, and a highly educated workforce"},
+  "Raleigh NC":{"note":"Research Triangle anchor city with major universities driving a tech-forward economy"},
+  "Salt Lake City UT":{"note":"Underrated tech hub with Silicon Slopes startups, incredible skiing, and a low cost of living"},
+  "Charlotte NC":{"note":"Banking capital of the Southeast and one of the fastest-growing major US metros"},
+  "Columbus OH":{"note":"Big Ten university city with a diversified economy, affordable housing, and surprising cultural depth"},
+  "Indianapolis IN":{"note":"Revitalized Midwest city with a strong sports economy, affordable living, and growing tech sector"},
+  "Pittsburgh PA":{"note":"Steel city reinvented as a tech and medical research hub with Carnegie Mellon and Pitt leading the way"},
+  "Huntsville AL":{"note":"NASA and defense tech capital with one of the highest engineer concentrations in the country"},
+  "Boise ID":{"note":"Fastest-growing city in the US — outdoor lifestyle meets a booming tech and business community"},
+  "Richmond VA":{"note":"Capital of the mid-Atlantic with a growing tech sector, craft brewery scene, and affordable living"},
+  "Greenville SC":{"note":"Remodeled downtown and a surge of manufacturing and tech investment make this a city on the rise"},
+  "Des Moines IA":{"note":"Surprisingly strong financial and insurance hub with low cost of living and a fast-improving food scene"},
+  // RN
+  "Bend OR":{"note":"High desert city in central Oregon with over 300 sunny days, world-class cycling, and volcanic peaks"},
+  "Flagstaff AZ":{"note":"Ponderosa pine forest city at 7,000ft with Grand Canyon access and a genuine mountain town feel"},
+  "Bozeman MT":{"note":"Gateway to Yellowstone and Big Sky with a fast-growing university town energy and incredible scenery"},
+  "Durango CO":{"note":"Southwest Colorado mountain town with Mesa Verde nearby and serious outdoor recreation culture"},
+  "Missoula MT":{"note":"University of Montana river city surrounded by five valleys — one of the most livable mountain towns"},
+  "Jackson WY":{"note":"Grand Teton gateway town with world-class skiing, wildlife watching, and a surprisingly vibrant arts scene"},
+  "Brevard NC":{"note":"Waterfall capital of the East — small Blue Ridge town with exceptional mountain biking and music"},
+  "Sisters OR":{"note":"High desert town at the foot of the Three Sisters volcanoes — outdoor recreation and Western character"},
+  "Steamboat Springs CO":{"note":"Cowboy ski town with hot springs, rodeos, and a genuine ranching community alongside resort culture"},
+  "Prescott AZ":{"note":"Mile-high Arizona town with Whiskey Row, Granite Dells, and a relaxed high desert lifestyle"},
+  "Whitefish MT":{"note":"Glacier National Park gateway with a charming downtown, world-class skiing, and stunning lake views"},
+  "Hilo HI":{"note":"East Hawaii's rainy, lush, unpretentious town — volcanoes, waterfalls, and genuine Hawaiian culture"},
+  "Driggs ID":{"note":"Teton Valley hidden gem on the Idaho side of the Tetons — less crowded than Jackson with equal beauty"},
+  "Crested Butte CO":{"note":"Remote Colorado ski town with the best wildflower meadows in North America and a fierce local identity"},
+  "Hood River OR":{"note":"Columbia River Gorge windsurfing capital with world-class fruit orchards and Pacific Northwest beauty"},
+  // UI
+  "Ann Arbor MI":{"note":"University of Michigan's home — one of America's most intellectually alive mid-sized cities"},
+  "Madison WI":{"note":"Big Ten university town on an isthmus between two lakes with a progressive, engaged community"},
+  "Burlington VT":{"note":"UVM lake city with a surprisingly dense cultural scene and the most independent bookstores per capita"},
+  "Chapel Hill NC":{"note":"UNC's home in the Research Triangle — walkable, literary, and deeply invested in ideas"},
+  "Charlottesville VA":{"note":"UVA's home in the Blue Ridge foothills — Jefferson's university town with wine and intellectual culture"},
+  "Iowa City IA":{"note":"Home of the Iowa Writers' Workshop — the most influential literary program in America"},
+  "Eugene OR":{"note":"University of Oregon track-and-field town with a strong progressive identity and outdoor culture"},
+  "Bloomington IN":{"note":"Indiana University's home — a surprisingly cosmopolitan university town in the heart of the Midwest"},
+  "Oberlin OH":{"note":"Famous liberal arts college and conservatory — one of the most intellectually intense small towns in Ohio"},
+  "Lawrence KS":{"note":"KU Jayhawks town on the Kaw River with a strong music scene and progressive politics in red Kansas"},
+  "Oxford MS":{"note":"Ole Miss's hometown — William Faulkner's Rowan Oak, Square Books, and a surprisingly literary culture"},
+  "Gainesville FL":{"note":"University of Florida's city — affordable, young, and more culturally interesting than its size suggests"},
+  "Corvallis OR":{"note":"Oregon State University's home — a quiet, academic city surrounded by the Coast Range and Willamette Valley"},
+  "State College PA":{"note":"Penn State's Happy Valley — isolated by design, but deeply intellectual and surprisingly lively"},
+  "Amherst MA":{"note":"Five-College area anchor with Amherst, UMass, and Hampshire in a concentrated valley of ideas"},
+  // RA
+  "Charleston SC":{"note":"America's most beautiful city — antebellum architecture, exceptional dining, and a refined social culture"},
+  "New Orleans LA":{"note":"America's most unique city — French Quarter architecture, jazz, Creole food, and an undying spirit"},
+  "Santa Fe NM":{"note":"Adobe art capital of the Southwest — Georgia O'Keeffe country with world-class galleries and food"},
+  "Annapolis MD":{"note":"Colonial sailing capital of the Chesapeake with brick streets, Naval Academy tradition, and crab feasts"},
+  "Natchez MS":{"note":"Antebellum plantation capital on the Mississippi bluffs with more pre-Civil War mansions than anywhere"},
+  "Beaufort SC":{"note":"Low Country gem with Spanish moss, antebellum homes, and a quiet elegance that never oversells itself"},
+  "Galveston TX":{"note":"Victorian island city on the Gulf with ornate historic homes and a faded glamour worth preserving"},
+  "Fredericksburg TX":{"note":"Texas Hill Country German settlement with exceptional wine, wildflowers, and boutique sophistication"},
+  "Lexington VA":{"note":"Small Shenandoah Valley city with VMI and W&L — a preserved 19th century college town feel"},
+  "Cape May NJ":{"note":"Southernmost point of New Jersey with the highest concentration of Victorian architecture in America"},
+  "Edenton NC":{"note":"Tiny 18th century colonial port town on Albemarle Sound — one of the most beautiful small towns in the South"},
+  "Bardstown KY":{"note":"Bourbon Capital of the World with distillery heritage, Federal Hill, and small town Southern character"},
+  "Woodstock VT":{"note":"Vermont's most picturesque village with a covered bridge, Marsh-Billings farm, and 19th century charm"},
+  "San Antonio TX":{"note":"River Walk, Mission Trail, and a deep Hispanic cultural heritage make this Texas's most historically rich city"},
+  // EC
+  "Detroit MI":{"note":"Comeback city — abandoned buildings becoming galleries, a fierce local pride, and a music legacy unmatched in America"},
+  "Baltimore MD":{"note":"Gritty port city with a dense arts scene, cheap rents, and a Johns Hopkins-anchored intellectual edge"},
+  "Kansas City MO":{"note":"Jazz and BBQ capital with a thriving arts scene, affordable studio space, and a major street art culture"},
+  "Richmond VA":{"note":"Former Confederate capital turned progressive arts hub — murals everywhere and a booming brewery culture"},
+  "Tucson AZ":{"note":"University of Arizona desert city with a genuine arts underground, Mexican food culture, and affordable rents"},
+  "Albuquerque NM":{"note":"High desert city with serious arts institutions, Breaking Bad notoriety, and cheap space for creative work"},
+  "Akron OH":{"note":"Birthplace of LeBron and a thriving arts scene built in old rubber factories with Rust Belt grit"},
+  "Memphis TN":{"note":"Blues, soul, and rock and roll birthplace with Beale Street, Stax Records history, and cheap creative rents"},
+  "Providence RI":{"note":"RISD graduates populate a dense arts ecosystem in a city that punches far above its weight creatively"},
+  "Gary IN":{"note":"Michael Jackson's birthplace — post-industrial, raw, and genuinely on the edge of rediscovery"},
+  "Pittsburgh PA":{"note":"Reinvented steel city with a thriving arts district in old industrial spaces and Carnegie Mellon's creative output"},
+  "East Nashville TN":{"note":"Nashville's creative counterweight — independent music, vintage shops, and the city's real artistic soul"},
+  // SA
+  "Princeton NJ":{"note":"One of America's greatest university towns — walkable, wealthy, and steeped in intellectual tradition"},
+  "New Haven CT":{"note":"Yale's home — a mid-sized city with world-class museums, pizza, and an unusually dense cultural life"},
+  "Evanston IL":{"note":"Northwestern's Chicago suburb — an intellectually serious town that functions as a city unto itself"},
+  "Hanover NH":{"note":"Dartmouth's remote New Hampshire home — isolated, rigorous, and deeply Ivy League in character"},
+  "Berkeley CA":{"note":"UC Berkeley's city — counterculture birthplace that remains one of America's most intellectually charged places"},
+  "Palo Alto CA":{"note":"Stanford's hometown at the heart of Silicon Valley — where academic excellence and tech ambition meet"},
+  "Pasadena CA":{"note":"Caltech and JPL make this one of the most scientifically dense small cities in the country"},
+  "Corvallis OR":{"note":"Oregon State University's research hub in the Willamette Valley — precise, outdoorsy, and underrated"},
+  // SS
+  "Key West FL":{"note":"Southernmost US city — Hemingway's bar, sunsets on Mallory Square, and a year-round tropical energy"},
+  "Honolulu HI":{"note":"Pacific island capital with Waikiki, Diamond Head, and an aloha spirit that's genuinely infectious"},
+  "Fort Lauderdale FL":{"note":"Venice of America — 300 miles of waterways, year-round sun, and a social scene that never really stops"},
+  "Clearwater FL":{"note":"Gulf Coast city with consistently rated best beaches in America and a warm, social Gulf energy"},
+  "St Pete FL":{"note":"St. Petersburg — arts capital of Florida's Gulf Coast with the Dali Museum and a walkable waterfront"},
+  "Pensacola FL":{"note":"Florida's forgotten panhandle gem — sugar white beaches, historic downtown, and a genuine community feel"},
+  "Delray Beach FL":{"note":"Palm Beach County's most social small city — Atlantic Ave walkable strip with a lively year-round scene"},
+  "Naples FL":{"note":"Gulf Coast luxury town with pristine beaches, world-class dining, and a relaxed upscale social culture"},
+  "Scottsdale AZ":{"note":"Desert resort city with year-round sun, world-class golf, outdoor dining, and a strong social scene"},
+  "Tempe AZ":{"note":"ASU's home — perpetually warm, social, and walkable along Tempe Town Lake with a young energetic vibe"},
+  "San Antonio TX":{"note":"River Walk city with a warm climate, strong social culture, and a year-round festival calendar"},
+  // QO
+  "Carmel CA":{"note":"Quaint Monterey Peninsula village where cars have no street addresses and galleries fill every block"},
+  "Ojai CA":{"note":"Pink moment sunsets over the Topa Topa mountains — a spiritual arts colony an hour from LA"},
+  "Woodstock NY":{"note":"Hudson Valley counterculture village with a legendary music history and quiet Catskill mountain setting"},
+  "Bisbee AZ":{"note":"Copper mining ghost town turned arts community — narrow winding streets and a population of quiet observers"},
+  "Sedona AZ":{"note":"Red rock vortex country — one of the most visually dramatic small towns in America"},
+  "Sausalito CA":{"note":"Houseboat community across the bay from San Francisco with stunning views and a quiet artistic character"},
+  "Ashland OR":{"note":"Shakespeare Festival town in southern Oregon with a sophisticated cultural life and a gentle mountain setting"},
+  "Saugatuck MI":{"note":"Lake Michigan dunes arts village with a painterly light and a long tradition of quiet creative retreat"},
+  // GC
+  "Burlington VT":{"note":"Lake Champlain city with the strongest local food movement in the Northeast and genuine community bonds"},
+  "Missoula MT":{"note":"University of Montana city in five valleys — one of the most community-oriented cities in the Mountain West"},
+  "Bellingham WA":{"note":"Pacific Northwest city between Seattle and Vancouver with a tight neighborhood identity and outdoor culture"},
+  "Eau Claire WI":{"note":"Chippewa Valley city with a remarkable music scene for its size and a strong sense of local pride"},
+  "Traverse City MI":{"note":"Cherry capital of the world on Grand Traverse Bay — small, tight, and built around local agriculture"},
+  "Fort Collins CO":{"note":"Colorado State city at the foot of the Rockies with exceptional bike infrastructure and local brewery culture"},
+  "Brevard NC":{"note":"Waterfall capital of the East with a Music Center festival tradition and Blue Ridge community character"},
+  "Lawrence KS":{"note":"KU Jayhawks town with Massachusetts Street's independent shops and a tight-knit progressive community"},
+  "Arcata CA":{"note":"Humboldt State's remote redwood city — one of the most tight-knit and politically engaged small cities"},
+  "Decorah IA":{"note":"Norwegian heritage river town in Iowa's Driftless region — farmers markets, folk music, and genuine belonging"},
+  "Northfield MN":{"note":"Two college town — Carleton and St Olaf — with a genuine community identity and beautiful river setting"},
+  // LS
+  "New York NY":{"note":"The world's most important city — unmatched density of finance, culture, ambition, and human energy"},
+  "San Francisco CA":{"note":"Tech wealth capital with Pacific views, world-class dining, and the world's highest concentration of billionaires"},
+  "Miami FL":{"note":"Global wealth hub at the intersection of American ambition and Latin American capital"},
+  "Los Angeles CA":{"note":"Entertainment capital of the world with the largest concentration of high-net-worth individuals in the US"},
+  "Chicago IL":{"note":"America's Second City — architecture capital with major financial exchanges and a world-class cultural scene"},
+  "Boston MA":{"note":"Harvard and MIT anchor a city where old money, new biotech, and world-class universities overlap"},
+  "Washington DC":{"note":"Power capital — where political influence, think tanks, and federal budgets create a unique wealth ecosystem"},
+  "Seattle WA":{"note":"Amazon and Microsoft home base — Pacific Northwest wealth meets a strong design and innovation culture"},
+  "Houston TX":{"note":"Energy capital of America with the Texas Medical Center and a surprisingly world-class arts scene"},
+  "Dallas TX":{"note":"Oil wealth meets corporate America — luxury real estate, private aviation, and a serious social scene"},
+  "Palo Alto CA":{"note":"The wealthiest ZIP code per capita in America — Stanford at the center of Silicon Valley power"},
+  "Greenwich CT":{"note":"Hedge fund capital of America — the wealthiest county in the US with New York proximity"},
+  "Aspen CO":{"note":"America's most elite mountain town — where billionaires ski alongside CEOs and global power players meet"},
+  "Palm Beach FL":{"note":"America's most exclusive island town — the gold standard of old money leisure and East Coast prestige"},
+  "Newport Beach CA":{"note":"Orange County's most prestigious waterfront city — superyachts, private clubs, and Pacific luxury"},
+
+  // missing entries — name+state format
+  "San Diego CA":{"note":"Laid-back Southern California coastal city with near-perfect weather, surf culture, and a relaxed creative scene"},
+  "Santa Barbara CA":{"note":"California Riviera between mountains and ocean — Spanish Colonial architecture, wine country, and year-round sun"},
+  "Portland ME":{"note":"New England's most creative small city — farm-to-table food, indie music, and a fierce local identity on Casco Bay"},
+  "Charleston SC":{"note":"America's most beautiful city — antebellum architecture, exceptional dining, and a refined Low Country culture"},
+  "Wilmington NC":{"note":"Cape Fear River port city with a growing film industry, historic downtown, and Atlantic beach access"},
+  "Cambridge MA":{"note":"Harvard and MIT's home — the most intellectually dense square mile in America"},
+  "Philadelphia PA":{"note":"America's first great city — world-class museums, a fierce local identity, and a gritty creative energy"},
+  "Boulder CO":{"note":"University of Colorado city at the foot of the Rockies — outdoorsy, health-conscious, and intellectually alive"},
+  "Chattanooga TN":{"note":"Tennessee River city revitalized through outdoor recreation, tech investment, and a walkable downtown"},
+  "Tampa FL":{"note":"Gulf Coast city with a booming economy, Ybor City culture, and easy access to some of Florida's best beaches"},
+  "Jacksonville FL":{"note":"Florida's largest city with 22 miles of beaches, a growing arts scene, and a low cost of living"},
+  "Spokane WA":{"note":"Eastern Washington's largest city — gateway to the Cascades and Rockies with a thriving arts scene"},
+  "Brooklyn NY":{"note":"New York's most creative borough — the global benchmark for independent culture, food, and urban cool"},
+  "Corpus Christi TX":{"note":"Texas Gulf Coast city with warm water, sailing culture, and a relaxed coastal lifestyle"},
+  "College Station TX":{"note":"Texas A&M's home in the Brazos Valley — a tight-knit academic community with serious Aggie pride"},
+  "Stanford CA":{"note":"Silicon Valley's intellectual heart — the university campus that has produced more startup wealth than any other"},
+  "Braddock PA":{"note":"Post-industrial Pittsburgh suburb being reclaimed by artists and activists — raw, real, and genuinely in flux"},
+
+  // ── RECONSIDER entries (why they don't fit each archetype) ──
+  // AI reconsider
+  "Las Vegas NV":{"note":"Built entirely around spectacle and consumption — no cultural infrastructure, indie scene, or intellectual depth to speak of"},
+  "Scottsdale AZ":{"note":"Luxury resort culture with no arts identity — expensive, car-dependent, and optimized for nightlife over creativity"},
+  "Orlando FL":{"note":"Theme park economy built for tourists, not residents — lacks the neighborhood character and cultural depth creative types need"},
+  "Plano TX":{"note":"Affluent Dallas suburb with excellent infrastructure but zero creative energy — purely corporate and residential"},
+  "Gilbert AZ":{"note":"One of the fastest-growing Phoenix suburbs — clean, safe, and completely culturally generic"},
+  "Frisco TX":{"note":"Master-planned Dallas suburb where everything is new, shiny, and indistinguishable — no patina, no scene"},
+  "Chandler AZ":{"note":"Tech-campus suburban sprawl with no walkable arts district or creative community to speak of"},
+  "Henderson NV":{"note":"Las Vegas's biggest suburb — planned communities, strip malls, and a lifestyle optimized for convenience not culture"},
+  "The Woodlands TX":{"note":"Houston's most polished master-planned suburb — excellent amenities, zero creative edge"},
+  "Irvine CA":{"note":"UCI university town planned so carefully it has no personality — safe, wealthy, and culturally inert"},
+  // CC reconsider
+  "Phoenix AZ":{"note":"Desert sprawl 90 miles from the ocean — extreme heat for 6 months, car-only, and no coastal energy whatsoever"},
+  "Dallas TX":{"note":"Landlocked Texas metropolis with no natural water, intense heat, and a car-dependent layout that kills walkability"},
+  "Indianapolis IN":{"note":"Great midwestern city but landlocked, flat, and without the coastal energy and outdoor lifestyle you need"},
+  "Columbus OH":{"note":"Solid midwestern city but hundreds of miles from any coast — the environment is just fundamentally wrong"},
+  "Memphis TN":{"note":"Mississippi River city with real cultural depth, but the humid flat landscape won't satisfy a coastal need"},
+  "Lubbock TX":{"note":"Flat, windy, landlocked West Texas — about as far from coastal living as you can get in America"},
+  "Amarillo TX":{"note":"Texas Panhandle flatlands — no coast, no mountains, no water, just wind and wide open plains"},
+  "Wichita KS":{"note":"Smack in the center of the continent — you'd need to drive 1,500 miles to see an ocean"},
+  "Oklahoma City OK":{"note":"Landlocked plains city — solid and improving, but fundamentally the wrong environment for a coastal soul"},
+  "Omaha NE":{"note":"Missouri River city with great food and warmth, but the landscape and climate are the opposite of coastal living"},
+  // AM reconsider
+  "Scranton PA":{"note":"Post-industrial Pennsylvania city that has struggled to attract new economy investment and talent"},
+  "Stockton CA":{"note":"Central Valley city that has faced persistent economic challenges and limited opportunity pipeline"},
+  "Flint MI":{"note":"Michigan city still working through serious economic and infrastructure challenges — limited opportunities for builders"},
+  "Gary IN":{"note":"Post-steel city near Chicago with deep challenges — not the launchpad for ambitious builders"},
+  "Youngstown OH":{"note":"Rust Belt city facing population decline and limited new economy investment — not where momentum lives"},
+  "Dayton OH":{"note":"Mid-sized Ohio city with some aerospace industry but lacking the startup density and network effects you need"},
+  "Rockford IL":{"note":"Second-largest Illinois city outside Chicago but significantly behind in economic development and opportunity"},
+  "Shreveport LA":{"note":"Northwest Louisiana's largest city with an economy tied to oil and gaming — limited innovation infrastructure"},
+  "Beaumont TX":{"note":"Southeast Texas petrochemical city — industry-specific economy with limited entrepreneurial ecosystem"},
+  "Peoria IL":{"note":"Mid-sized Illinois city historically tied to manufacturing — 'Will it play in Peoria?' became shorthand for average"},
+  // RN reconsider
+  "Houston TX":{"note":"Flat, sprawling, and brutally humid — one of the least nature-accessible major cities in America"},
+  "New Orleans LA":{"note":"Sea-level city below a levee — extraordinary culture but the flat, wet landscape offers no topography or escape into nature"},
+  "Miami FL":{"note":"Urban coastal density with no wilderness nearby — nature access means Everglades day trips, not daily mountain escapes"},
+  "Baton Rouge LA":{"note":"Louisiana's capital on the Mississippi floodplain — flat, hot, humid, and without meaningful nature access"},
+  "Mobile AL":{"note":"Gulf Coast port city in a flat, humid coastal plain — no elevation, no wilderness, just heat and water"},
+  // UI reconsider
+  "Virginia Beach VA":{"note":"Military and tourism economy — one of the least intellectually engaged major US cities per capita"},
+  "Myrtle Beach SC":{"note":"Pure tourism city — golf courses and boardwalks, no university presence or intellectual infrastructure"},
+  "Branson MO":{"note":"Ozarks entertainment city built around live shows and family tourism — no academic or intellectual culture"},
+  "Biloxi MS":{"note":"Gulf Coast casino city — the economy and culture are entirely entertainment-driven with no research or university anchor"},
+  "Panama City Beach FL":{"note":"Spring break capital — seasonal party tourism city with no intellectual community or university presence"},
+  "Pigeon Forge TN":{"note":"Dolly Parton's hometown and a pure tourist trap — Dollywood, go-karts, and outlet malls define the experience"},
+  "Gatlinburg TN":{"note":"Gateway to the Smokies but culturally all souvenir shops and fudge — no intellectual or academic identity"},
+  "Kissimmee FL":{"note":"Disney's suburb — virtually the entire economy and culture orbits theme park tourism"},
+  "Daytona Beach FL":{"note":"Car racing and spring break define this city — not a place where ideas or intellectual culture take root"},
+  // RA reconsider
+  "Tempe AZ":{"note":"ASU college town with energy and amenities, but no architectural heritage or historical depth to speak of"},
+  "Aurora CO":{"note":"Denver's largest suburb — sprawling, generic, and without the historic character or beauty you're drawn to"},
+  "North Las Vegas NV":{"note":"Las Vegas's northern suburb — all the drawbacks of Vegas with none of its entertainment infrastructure"},
+  "Mesquite TX":{"note":"Eastern Dallas suburb with no historic character — post-war suburban development at its most generic"},
+  "League City TX":{"note":"Houston suburb that exists primarily as bedroom community — no historic identity or aesthetic character"},
+  "Pearland TX":{"note":"One of Houston's fastest-growing suburbs — completely new, completely generic, completely without soul"},
+  // EC reconsider
+  "Naperville IL":{"note":"Chicago's wealthiest suburb — so polished and safe it has surgically removed everything that makes cities interesting"},
+  "Carmel IN":{"note":"Indianapolis suburb known for its roundabouts and safety rankings — the antithesis of underground creative culture"},
+  "Overland Park KS":{"note":"Kansas City's most affluent suburb — master-planned prosperity that leaves no room for the weird or experimental"},
+  "Sugar Land TX":{"note":"Houston suburb named after its sugar plantation history — wealthy, corporate, and creatively sterile"},
+  "Thousand Oaks CA":{"note":"Ventura County suburb that consistently ranks as one of America's safest cities — at the cost of all creative risk"},
+  "Cary NC":{"note":"Raleigh suburb sarcastically nicknamed 'Containment Area for Relocated Yankees' — planned, wealthy, and perfectly bland"},
+  // SA reconsider
+  "Myrtle Beach SC":{"note":"Tourism economy with no research or university presence — intellectual rigor doesn't have a foothold here"},
+  "Branson MO":{"note":"Entertainment tourism city — the culture here actively celebrates anti-intellectualism as part of its appeal"},
+  "Gatlinburg TN":{"note":"Mountain tourist trap — souvenir shops and pancake houses are the dominant intellectual offering"},
+  "Pigeon Forge TN":{"note":"Dolly Parton's home and a theme park town — charming in its own way but no place for serious academic work"},
+  "Ocean City MD":{"note":"Seasonal beach boardwalk economy — closes half the year and has no intellectual community or research infrastructure"},
+  // SS reconsider
+  "Seattle WA":{"note":"186 gray days per year on average — the Pacific Northwest drizzle is beautiful to some but a social energy killer for you"},
+  "Portland OR":{"note":"Legendary creative city but famously gloomy — 9 months of gray skies will drain your sun-dependent energy"},
+  "Minneapolis MN":{"note":"Surprisingly vibrant city but brutally cold winters that push everything indoors for 5 months — tough for outdoor social types"},
+  "Milwaukee WI":{"note":"Great beer city on Lake Michigan but the winters are genuinely harsh and the outdoor season is painfully short"},
+  "Buffalo NY":{"note":"Lake-effect snow capital of America — receives more snow than almost any other major US city"},
+  "Cleveland OH":{"note":"Great comeback city but the Lake Erie winters are long, gray, and cold — not the solar-powered life you need"},
+  "Detroit MI":{"note":"Fascinating city but the climate — cold, gray Great Lakes winters — will work against your outdoor social nature"},
+  "Duluth MN":{"note":"Dramatic Lake Superior city but one of the coldest and cloudiest in America — not for the sun-dependent"},
+  "Anchorage AK":{"note":"Extraordinary nature but barely 5 hours of daylight in winter — the darkness alone would drain a social sun-seeker"},
+  // QO reconsider
+  "New York NY":{"note":"Never truly quiet — 8 million people and a city that never sleeps will overwhelm a mind that needs stillness to think"},
+  "Los Angeles CA":{"note":"Car culture, sprawl, and ambient noise make genuine stillness almost impossible to find within the city itself"},
+  "Atlanta GA":{"note":"Fast-growing sprawling metro with intense traffic and a pace optimized for ambition — not observation and quiet"},
+  "Houston TX":{"note":"One of America's most sprawling, car-dependent cities — no walkable beauty, no quiet corners, just scale and heat"},
+  "Chicago IL":{"note":"World-class city but Lake Shore wind, brutal winters, and urban density work against the unhurried life you need"},
+  "Miami FL":{"note":"Perpetual social buzz, nightlife, and tourist energy — quiet observation isn't in Miami's DNA"},
+  "Dallas TX":{"note":"Corporate sprawl without beauty or pedestrian life — hard to be a quiet observer when you're stuck in traffic"},
+  "Orlando FL":{"note":"Theme park energy permeates everything — even the residential areas feel like they're performing for an audience"},
+  // GC reconsider
+  "Los Angeles CA":{"note":"A collection of neighborhoods that function as separate cities — building genuine community requires fighting against the car-dependent sprawl"},
+  "Phoenix AZ":{"note":"Massive, hot, and car-dependent — the urban form itself works against the walkable neighborhood community feel you need"},
+  "Charlotte NC":{"note":"Fast-growing banking city that keeps absorbing suburbs — neighborhood identity gets diluted as the metro expands rapidly"},
+  // LS reconsider
+  "Branson MO":{"note":"Family entertainment tourism at its most democratic — the antithesis of prestige and world-class infrastructure"},
+  "Pigeon Forge TN":{"note":"Dolly's town and a beloved tourist destination, but the social capital and networks you need don't exist here"},
+  "Gatlinburg TN":{"note":"Smoky Mountain gateway town — charming but completely outside any high-status economic or social network"},
+  "Flint MI":{"note":"Michigan city with serious ongoing challenges — not the launchpad for status-driven ambition and world-class living"},
+  "Youngstown OH":{"note":"Post-industrial Ohio city — the infrastructure gap between here and your ambitions would be genuinely discouraging"},
+  "Scranton PA":{"note":"Made famous by The Office for good reason — a mid-tier Pennsylvania city without the networks or prestige you need"},
+  "Stockton CA":{"note":"Central Valley city that has faced significant challenges — the opportunity density here won't match your ambitions"},
+  "Dayton OH":{"note":"Solid midwestern city but far from the wealth concentrations, prestige networks, and world-class amenities you thrive in"},
+  "Rockford IL":{"note":"Illinois's second city in name but not in opportunity — limited infrastructure for the ambition and lifestyle you need"},};
+
+function usTag(city, type){
+  const info = US_CITY_INFO[city];
+  const cls = type==='discover' ? 'us-tag-discover' : type==='anchor' ? 'us-tag-anchor' : 'us-tag-reconsider';
+  const tip = info
+    ? `<span class="city-tooltip"><div class="city-tooltip-name">${city}</div><div class="city-tooltip-country">USA</div><div class="city-tooltip-note">${info.note}</div></span>`
+    : '';
+  const tap = info ? `ontouchstart="toggleCityTip(event,this)"` : '';
+  return `<span class="${cls}" ${tap}>${city}${tip}</span>`;
+}
+
+let usCitiesActiveFilter='all';
+function openUSCities(){
+  document.getElementById('us-cities-panel').classList.add('open');
+  document.body.style.overflow='hidden';
+  renderUSCities();
+}
+function closeUSCities(){
+  document.getElementById('us-cities-panel').classList.remove('open');
+  document.body.style.overflow='';
+}
+function renderUSCities(){
+  const filterEl=document.getElementById('usCitiesFilter');
+  filterEl.innerHTML=
+    `<button class="us-filter-pill us-filter-all${usCitiesActiveFilter==='all'?' on':''}" onclick="filterUSCities('all')">🗺️ All Archetypes</button>`+
+    Object.entries(ARCHETYPES).map(([key,a])=>
+      `<button class="us-filter-pill${usCitiesActiveFilter===key?' on':''}" onclick="filterUSCities('${key}')">${a.emoji} ${a.name}</button>`
+    ).join('');
+  const keys=usCitiesActiveFilter==='all'?Object.keys(US_CITIES):[usCitiesActiveFilter];
+  document.getElementById('usCitiesGrid').innerHTML=keys.map(key=>{
+    const arch=ARCHETYPES[key]; const data=US_CITIES[key];
+    if(!arch||!data) return '';
+    return `<div class="us-arch-card">
+      <div class="us-arch-header" id="ush-${key}" onclick="toggleUSCard('${key}')">
+        <span class="us-arch-emoji">${arch.emoji}</span>
+        <div style="flex:1">
+          <div class="us-arch-name">${arch.name}</div>
+          <div class="us-arch-tagline">${data.tagline}</div>
+        </div>
+        <span class="us-arch-chevron">▾</span>
+      </div>
+      <div class="us-arch-body" id="usb-${key}">
+        <p class="us-arch-body-desc">${data.desc}</p>
+        <div class="us-city-section">
+          <p class="us-city-label" style="color:#4ade80">15 cities to discover</p>
+          <div class="us-city-tags">${data.discover.map(c=>usTag(c,'discover')).join('')}</div>
+        </div>
+        <div class="us-city-section" style="margin-top:10px">
+          <p class="us-city-label" style="color:rgba(240,235,226,.4)">Familiar anchors</p>
+          <div class="us-city-tags">${data.anchor.map(c=>usTag(c,'anchor')).join('')}</div>
+        </div>
+        <div class="us-city-section" style="margin-top:10px">
+          <p class="us-city-label" style="color:#ff6b6b">10 cities to reconsider</p>
+          ${data.reconsider_desc ? `<p style="font-size:.78rem;font-weight:300;color:rgba(255,107,107,.65);line-height:1.65;margin-bottom:10px;font-style:italic">${data.reconsider_desc}</p>` : ''}
+          <div class="us-city-tags">${data.reconsider.map(c=>usTag(c,'reconsider')).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  if(usCitiesActiveFilter!=='all') toggleUSCard(usCitiesActiveFilter,true);
+}
+function filterUSCities(key){
+  usCitiesActiveFilter=key;
+  renderUSCities();
+  document.getElementById('usCitiesGrid').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function toggleUSCard(key,forceOpen=false){
+  const h=document.getElementById('ush-'+key);
+  const b=document.getElementById('usb-'+key);
+  if(!h||!b) return;
+  const open=b.classList.contains('open');
+  if(forceOpen||!open){h.classList.add('expanded');b.classList.add('open');}
+  else{h.classList.remove('expanded');b.classList.remove('open');}
+}
+
 // ── homepage arch grid ─────────────────────────
+
+/* ══════════════════════════════════════════════
+   INTERNATIONAL CITIES DATA & FUNCTIONS
+══════════════════════════════════════════════ */
+const INTL_CITIES = {
+  AI:{
+    tagline:"Cultural memory, indie scenes, cheap studio space",
+    desc:"You thrive in cities where history is layered into the streets, creative rent is affordable, and a café feels like a living room. These cities reward depth over prestige.",
+    discover:["Tbilisi, Georgia","Brno, Czech Republic","Łódź, Poland","Valparaíso, Chile","Plovdiv, Bulgaria","Riga, Latvia","Sarajevo, Bosnia","Batumi, Georgia","Leipzig, Germany","Wrocław, Poland","Tartu, Estonia","Novi Sad, Serbia","Kotor, Montenegro","Chiang Mai, Thailand","Medellín, Colombia"],
+    anchor:["Berlin, Germany","Montreal, Canada","Prague, Czech Republic","Lisbon, Portugal","Porto, Portugal"],
+    reconsider_desc:"These cities prioritize financial output, luxury tourism, or pure resort culture over creative depth. There's little affordable studio space, no indie scene worth speaking of, and the culture caters to visitors rather than the artists and thinkers who make cities interesting.",
+    reconsider:["Dubai, UAE","Doha, Qatar","Monaco","Las Vegas USA","Cancún, Mexico","Abu Dhabi, UAE","Macau, China","Ibiza, Spain","Mykonos, Greece","Bali resort areas"]
+  },
+  CC:{
+    tagline:"Salt air, creative friction, smaller coastal cities",
+    desc:"You need cities where the ocean is part of daily life — not a weekend trip. Smaller coastal cities where creativity flows as freely as the tide and the pace allows work that actually matters.",
+    discover:["Setúbal, Portugal","Florianópolis, Brazil","Hvar, Croatia","Las Palmas, Spain","Todos Santos, Mexico","Peniche, Portugal","Taghazout, Morocco","Ilha Grande, Brazil","Kotor, Montenegro","Varna, Bulgaria","Essaouira, Morocco","Chania, Crete","Playa del Carmen, Mexico","Mui Ne, Vietnam","Cascais, Portugal"],
+    anchor:["Barcelona, Spain","Porto, Portugal","Byron Bay, Australia","San Sebastián, Spain","Tulum, Mexico"],
+    reconsider_desc:"These are inland megacities, gray northern cities, or landlocked places where the ocean is either absent or irrelevant to daily life. The coastal energy and outdoor water culture you depend on simply doesn't exist here.",
+    reconsider:["Moscow, Russia","Warsaw, Poland","Minsk, Belarus","Kabul, Afghanistan","Ulaanbaatar, Mongolia","Riyadh, Saudi Arabia","Astana, Kazakhstan","Bishkek, Kyrgyzstan","Harare, Zimbabwe","Lusaka, Zambia"]
+  },
+  AM:{
+    tagline:"Cities mid-ascent, startup density, hungry energy",
+    desc:"You're drawn to cities still climbing — enough infrastructure to build, enough hunger in the air to stay sharp. These are the places where the next wave of ambitious people are concentrating.",
+    discover:["Tallinn, Estonia","Tel Aviv, Israel","Warsaw, Poland","Vilnius, Lithuania","Bangalore, India","Ho Chi Minh City, Vietnam","Lagos, Nigeria","Nairobi, Kenya","Bogotá, Colombia","Medellín, Colombia","Tbilisi, Georgia","Belgrade, Serbia","Bucharest, Romania","Cairo, Egypt","Karachi, Pakistan"],
+    anchor:["London, UK","Singapore","Austin USA","San Francisco USA","Dubai, UAE"],
+    reconsider_desc:"These cities have either stagnated economically, are heavily bureaucratic, or lack the startup ecosystems and ambitious networks that fuel your growth. Opportunity here requires fighting the system rather than being accelerated by it.",
+    reconsider:["Havana, Cuba","Pyongyang, North Korea","Harare, Zimbabwe","Caracas, Venezuela","Minsk, Belarus","Port Moresby, PNG","Tripoli, Libya","Yangon, Myanmar","Niamey, Niger","Ouagadougou, Burkina Faso"]
+  },
+  RN:{
+    tagline:"Topography in daily life, mountains or water within sight",
+    desc:"You need dramatic landscape within reach — cities where mountains, fjords, or wilderness are part of the daily view, not a day trip. The environment itself needs to restore you.",
+    discover:["Innsbruck, Austria","Nelson, New Zealand","Queenstown, New Zealand","Moab USA","Flagstaff USA","Interlaken, Switzerland","Banff, Canada","Salzburg, Austria","Ushuaia, Argentina","Tromsø, Norway","Lucerne, Switzerland","Wanaka, New Zealand","Zermatt, Switzerland","Puerto Natales, Chile","Hakuba, Japan"],
+    anchor:["Zurich, Switzerland","Vancouver, Canada","Oslo, Norway","Asheville USA","Bend USA"],
+    reconsider_desc:"These are flat, dense, or coastal megacities where nature is either absent or requires significant effort to reach. The daily landscape here won't provide the topography and wilderness access your nervous system needs.",
+    reconsider:["Dubai, UAE","Kuwait City, Kuwait","Dhaka, Bangladesh","Cairo, Egypt","Doha, Qatar","Mumbai, India","Manila, Philippines","Jakarta, Indonesia","Guangzhou, China","Houston USA"]
+  },
+  UI:{
+    tagline:"Dense with argument, archives, and people who read for pleasure",
+    desc:"You need a city built around intellectual infrastructure — universities, debate culture, world-class museums, and a population that treats ideas as serious business.",
+    discover:["Leipzig, Germany","Leuven, Belgium","Tartu, Estonia","Montpellier, France","Kraków, Poland","Göttingen, Germany","Coimbra, Portugal","Ghent, Belgium","Heidelberg, Germany","Uppsala, Sweden","Groningen, Netherlands","Tübingen, Germany","Louvain-la-Neuve, Belgium","Salamanca, Spain","Padua, Italy"],
+    anchor:["Vienna, Austria","Edinburgh, Scotland","Boston USA","Paris, France","Oxford, UK"],
+    reconsider_desc:"These cities built their identity around finance, tourism, or entertainment — not intellectual life. The infrastructure for serious ideas — universities, libraries, debate culture — either doesn't exist or isn't central to how the city sees itself.",
+    reconsider:["Las Vegas USA","Cancún, Mexico","Ibiza, Spain","Macau, China","Mecca, Saudi Arabia","Phuket, Thailand","Bali resort areas","Gold Coast, Australia","Atlantic City USA","Branson USA"]
+  },
+  RA:{
+    tagline:"Cities where the built environment is itself an art form",
+    desc:"You're drawn to cities where beauty is structural — cobblestones, tiled facades, historic plazas, and food that has been refined over centuries. Cities that feel like they were designed for living well.",
+    discover:["Oaxaca, Mexico","Lviv, Ukraine","Ghent, Belgium","Évora, Portugal","Kanazawa, Japan","Guanajuato, Mexico","Kotor, Montenegro","Matera, Italy","Cartagena, Colombia","San Cristóbal, Mexico","Valletta, Malta","Sintra, Portugal","Colmar, France","Hallstatt, Austria","Antibes, France"],
+    anchor:["Florence, Italy","Kyoto, Japan","Seville, Spain","Porto, Portugal","Bologna, Italy"],
+    reconsider_desc:"These are cities built fast, built new, or built purely for function — where aesthetic character and historical depth were never part of the plan. Beauty here is either absent or entirely manufactured for tourists rather than lived-in.",
+    reconsider:["Houston USA","Phoenix AZ USA","Riyadh, Saudi Arabia","Kuwait City","Shenzhen, China","Dubai, UAE","Abu Dhabi, UAE","Doha, Qatar","Astana, Kazakhstan","Las Vegas USA"]
+  },
+  EC:{
+    tagline:"Cities still in flux, underground scenes, rents that allow risk-taking",
+    desc:"You need a city that hasn't been fully figured out yet — where cheap rents allow creative risk-taking, the underground scene is thriving, and the energy feels genuinely experimental.",
+    discover:["Tbilisi, Georgia","Mexico City, Mexico","Medellín, Colombia","Łódź, Poland","Tallinn, Estonia","Bogotá, Colombia","Belgrade, Serbia","Detroit USA","Marseille, France","Beirut, Lebanon","Kyiv, Ukraine","Buenos Aires, Argentina","Lagos, Nigeria","Jakarta, Indonesia","Cairo, Egypt"],
+    anchor:["Berlin, Germany","Tokyo, Japan","Amsterdam, Netherlands","London, UK","Los Angeles USA"],
+    reconsider_desc:"These are over-polished, over-priced, or over-regulated cities where everything interesting has already been gentrified away or never existed. The experimental creative needs friction, affordability, and unfinished edges — these places have none.",
+    reconsider:["Monaco","Singapore","Zurich, Switzerland","Geneva, Switzerland","Luxembourg City","Vaduz, Liechtenstein","Bern, Switzerland","Tokyo's Roppongi Hills","Dubai Marina, UAE","Doha, Qatar"]
+  },
+  SA:{
+    tagline:"Precision, intellectual rigor, research infrastructure",
+    desc:"You work best where excellence is the norm — cities anchored by world-class universities, research institutions, and a culture where careful, rigorous thinking is the standard.",
+    discover:["Tartu, Estonia","Heidelberg, Germany","Lausanne, Switzerland","Uppsala, Sweden","Leuven, Belgium","Tübingen, Germany","Groningen, Netherlands","Coimbra, Portugal","Göttingen, Germany","Pisa, Italy","Ghent, Belgium","Salamanca, Spain","Padua, Italy","Trondheim, Norway","Turku, Finland"],
+    anchor:["Oxford, UK","Cambridge, UK","Zurich, Switzerland","Boston USA","Tokyo, Japan"],
+    reconsider_desc:"These are cities where intellectual rigor is not valued or where the entire economy is built around entertainment, leisure, or resource extraction with no research infrastructure. Serious academic and scientific work has no foothold here.",
+    reconsider:["Las Vegas USA","Ibiza, Spain","Cancún, Mexico","Macau, China","Phuket, Thailand","Marbella, Spain","Bali resort areas","Gold Coast, Australia","Sharm el-Sheikh, Egypt","Ayia Napa, Cyprus"]
+  },
+  SS:{
+    tagline:"Warmth in both senses — climate and social culture",
+    desc:"You need cities where the weather keeps people outside and the culture makes strangers into regulars. Outdoor dining, warm evenings, and a social energy that spills into the streets.",
+    discover:["Valencia, Spain","Cali, Colombia","Split, Croatia","Las Palmas, Spain","Cartagena, Colombia","Málaga, Spain","Medellin, Colombia","Chiang Mai, Thailand","Cape Town, South Africa","Thessaloniki, Greece","Izmir, Turkey","Da Nang, Vietnam","Montevideo, Uruguay","Valletta, Malta","Nicosia, Cyprus"],
+    anchor:["Barcelona, Spain","Lisbon, Portugal","Miami USA","Sydney, Australia","Buenos Aires, Argentina"],
+    reconsider_desc:"These cities spend months in darkness, extreme cold, or are culturally reserved in ways that make spontaneous social connection difficult. The outdoor social life and warm human energy you depend on simply isn't part of how these places operate.",
+    reconsider:["Reykjavik, Iceland","Murmansk, Russia","Tromsø, Norway","Yakutsk, Russia","Helsinki in winter","Oslo in winter","Nuuk, Greenland","Longyearbyen, Svalbard","Churchill, Canada","Ulaanbaatar, Mongolia"]
+  },
+  QO:{
+    tagline:"Beautiful enough to reward attention, unhurried enough to think",
+    desc:"You're drawn to cities that move at a human pace — beautiful, walkable, and quiet enough that you can actually notice things. Small enough to feel personal, rich enough in character to stay.",
+    discover:["Reykjavik, Iceland","Ljubljana, Slovenia","Bruges, Belgium","Kanazawa, Japan","Évora, Portugal","Chiang Rai, Thailand","Funchal, Madeira","Kotor, Montenegro","Valletta, Malta","Bolzano, Italy","Colmar, France","Sintra, Portugal","Plovdiv, Bulgaria","Hoi An, Vietnam","Hallstatt, Austria"],
+    anchor:["Kyoto, Japan","Copenhagen, Denmark","Tallinn, Estonia","Porto, Portugal","Oaxaca, Mexico"],
+    reconsider_desc:"These are overwhelming, relentless, or chaotic cities where genuine stillness and quiet observation are nearly impossible. The scale, noise, and pace will exhaust rather than restore you — you'd spend your energy surviving the environment rather than absorbing it.",
+    reconsider:["New York USA","Mumbai, India","Cairo, Egypt","Bangkok, Thailand","Mexico City rush hour","Jakarta, Indonesia","Dhaka, Bangladesh","Lagos, Nigeria","Karachi, Pakistan","Delhi, India"]
+  },
+  GC:{
+    tagline:"Human scale, neighborhood identity, belonging by design",
+    desc:"You want a city where the urban form itself creates community — walkable, small enough to have regulars, and culturally alive enough that staying feels like a real choice.",
+    discover:["Ghent, Belgium","Freiburg, Germany","Chiang Mai, Thailand","Oaxaca, Mexico","Nelson, New Zealand","Bellingham USA","Tartu, Estonia","Leuven, Belgium","Tromsø, Norway","Valletta, Malta","Hoi An, Vietnam","Luang Prabang, Laos","San Cristóbal, Mexico","Plovdiv, Bulgaria","Sintra, Portugal"],
+    anchor:["Asheville USA","Portland USA","Bristol, UK","Medellín, Colombia","Bruges, Belgium"],
+    reconsider_desc:"These megacities and sprawling metros make community-building genuinely difficult — the scale atomizes rather than connects, and you can live there for years without knowing your neighbors. The urban form works against the belonging you need.",
+    reconsider:["Tokyo, Japan","Shanghai, China","New York USA","Los Angeles USA","Jakarta, Indonesia","Delhi, India","Mumbai, India","Beijing, China","Dhaka, Bangladesh","Lagos, Nigeria"]
+  },
+  LS:{
+    tagline:"Excellence is visible, rewarded, and the baseline expectation",
+    desc:"You want cities where ambition is the norm and the infrastructure matches your standards — world-class dining, financial networks, international airports, and the kind of people who operate at the highest levels.",
+    discover:["Singapore","Geneva, Switzerland","Zurich, Switzerland","Monaco","Hong Kong, China","Abu Dhabi, UAE","Doha, Qatar","Luxembourg City","Shenzhen, China","Frankfurt, Germany","Riyadh, Saudi Arabia","Vienna, Austria","Amsterdam, Netherlands","Stockholm, Sweden","Toronto, Canada"],
+    anchor:["Dubai, UAE","London, UK","New York USA","Tokyo, Japan","Paris, France"],
+    reconsider_desc:"These cities lack the wealth concentration, global business infrastructure, and prestige networks that match your ambitions. They may be beautiful, affordable, or culturally rich in other ways — but the ceiling here is low and the opportunities won't match your scale.",
+    reconsider:["Havana, Cuba","Pyongyang, North Korea","Port-au-Prince, Haiti","Caracas, Venezuela","Harare, Zimbabwe","Dushanbe, Tajikistan","Bishkek, Kyrgyzstan","Niamey, Niger","Maputo, Mozambique","Ouagadougou, Burkina Faso"]
+  }
+};
+
+const INTL_CITY_INFO = {
+  "Tbilisi, Georgia":{"note":"Post-Soviet arts capital — cheap rents, a thriving underground scene, ancient wine culture, and one of the most exciting cities in the world right now"},
+  "Brno, Czech Republic":{"note":"Moravian university city with a quiet creative scene, Bauhaus architecture, and none of Prague's tourist crowds"},
+  "Łódź, Poland":{"note":"Former textile capital reinventing itself through murals, film festivals, and one of Europe's best street art scenes"},
+  "Valparaíso, Chile":{"note":"Hillside Pacific port city covered in street art, steep funicular streets, and bohemian energy overlooking the ocean"},
+  "Plovdiv, Bulgaria":{"note":"One of Europe's oldest cities with a compact Old Town, thriving arts district, and 2019 European Capital of Culture legacy"},
+  "Riga, Latvia":{"note":"Art Nouveau capital of the Baltics with the largest collection of the style in the world and a thriving arts scene"},
+  "Sarajevo, Bosnia":{"note":"City where East meets West — Ottoman bazaars beside Austro-Hungarian cafés, a resilient culture, and layered history"},
+  "Batumi, Georgia":{"note":"Black Sea port city with palm trees, Soviet architecture, and a rapidly changing creative and nightlife scene"},
+  "Leipzig, Germany":{"note":"Post-reunification city where affordable rents fueled a creative explosion — often called the new Berlin"},
+  "Wrocław, Poland":{"note":"City of bridges and market squares on the Oder River — one of Poland's most architecturally rich and livable cities"},
+  "Tartu, Estonia":{"note":"Estonia's second city and oldest university — compact, intellectual, and known as the city of good thoughts"},
+  "Novi Sad, Serbia":{"note":"EXIT Festival's home city on the Danube — vibrant, young, and one of the most underrated creative cities in Europe"},
+  "Kotor, Montenegro":{"note":"Medieval walled city on a fjord-like bay — one of the most dramatically beautiful old towns in the Adriatic"},
+  "Setúbal, Portugal":{"note":"Atlantic fishing port south of Lisbon with raw coastal beauty and none of the tourist pressure of the capital"},
+  "Florianópolis, Brazil":{"note":"Island city with 40+ beaches, a growing digital nomad scene, and a more laid-back alternative to São Paulo"},
+  "Hvar, Croatia":{"note":"Adriatic island town with lavender fields, crystal water, and a creative summer scene that stays genuine"},
+  "Las Palmas, Spain":{"note":"Year-round spring climate on a volcanic Canary Island — surfers, creatives, and digital nomads in an authentic Spanish city"},
+  "Todos Santos, Mexico":{"note":"Small Pacific artist town in Baja with galleries, surf breaks, and desert mountains rising behind it"},
+  "Peniche, Portugal":{"note":"Atlantic surf town on a peninsula north of Lisbon — raw, windy, and genuinely uncommercialised"},
+  "Taghazout, Morocco":{"note":"Berber fishing village turned surf hub on Morocco's Atlantic coast — simple, warm, and unpretentious"},
+  "Ilha Grande, Brazil":{"note":"Car-free tropical island off Rio with dense jungle, crystal water, and an almost complete absence of development"},
+  "Cascais, Portugal":{"note":"Elegant Atlantic coast town west of Lisbon — fishing village turned sophisticated retreat with excellent beaches"},
+  "Essaouira, Morocco":{"note":"Atlantic-facing Moroccan port with whitewashed medina walls, constant wind, and a laid-back creative community"},
+  "Chania, Crete":{"note":"Venetian harbor city in western Crete — the most atmospheric and architecturally beautiful city on the island"},
+  "Tallinn, Estonia":{"note":"Medieval old town meets digital government — one of Europe's most tech-forward capitals with a perfectly preserved historic center"},
+  "Tel Aviv, Israel":{"note":"Startup city on the Mediterranean — relentless innovation energy, great beaches, and a restaurant scene that punches far above its weight"},
+  "Warsaw, Poland":{"note":"Rebuilt from rubble, now one of Central Europe's fastest-growing and most dynamic economies"},
+  "Vilnius, Lithuania":{"note":"Baroque capital of the Baltics with a legendary Old Town, thriving startup scene, and one of Europe's lowest costs of living"},
+  "Bangalore, India":{"note":"India's tech capital with a young, ambitious, English-speaking population and the country's highest density of startups"},
+  "Ho Chi Minh City, Vietnam":{"note":"Vietnam's economic engine — chaotic, fast-moving, young, and full of entrepreneurial opportunity"},
+  "Lagos, Nigeria":{"note":"West Africa's commercial capital — loud, ambitious, and the economic heartbeat of the continent's most populous country"},
+  "Nairobi, Kenya":{"note":"East Africa's startup hub — Silicon Savannah, a growing tech ecosystem, and a gateway to the continent"},
+  "Bogotá, Colombia":{"note":"High-altitude Andean capital with world-class museums, a cycling culture, and one of Latin America's most exciting food scenes"},
+  "Belgrade, Serbia":{"note":"Balkan capital with legendary nightlife, cheap living, an improving creative scene, and a fiercely independent spirit"},
+  "Bucharest, Romania":{"note":"Romania's capital with Hausmannian boulevards, a booming IT sector, and one of Europe's fastest internet speeds"},
+  "Innsbruck, Austria":{"note":"Alpine city surrounded by peaks on all sides — ski in winter, hike in summer, culture year-round in a compact city"},
+  "Nelson, New Zealand":{"note":"Sunny arts town at the top of New Zealand's South Island with beaches and Abel Tasman National Park nearby"},
+  "Queenstown, New Zealand":{"note":"Adventure capital on a glacial lake surrounded by the Remarkables mountain range — extreme sports and dramatic beauty"},
+  "Interlaken, Switzerland":{"note":"Valley town between two glacial lakes with the Bernese Oberland mountains framing every view"},
+  "Banff, Canada":{"note":"Rocky Mountain town inside a national park — dramatic peaks, turquoise lakes, and wildlife everywhere"},
+  "Salzburg, Austria":{"note":"Mozart's birthplace between Alps and lakes with baroque architecture, world festivals, and extraordinary natural setting"},
+  "Ushuaia, Argentina":{"note":"The world's southernmost city at the tip of Patagonia — gateway to Antarctica and surrounded by raw wilderness"},
+  "Tromsø, Norway":{"note":"Northern Norway's largest city inside the Arctic Circle — northern lights, midnight sun, and a strong outdoor culture"},
+  "Lucerne, Switzerland":{"note":"Swiss lake city at the foot of Mount Pilatus — picture-perfect wooden bridge, turquoise water, and Alpine backdrop"},
+  "Wanaka, New Zealand":{"note":"South Island mountain lake town that retains the small-town feel Queenstown has lost — stunning and unhurried"},
+  "Zermatt, Switzerland":{"note":"Car-free Swiss village beneath the Matterhorn — one of the most iconic mountain settings in the world"},
+  "Puerto Natales, Chile":{"note":"Gateway to Torres del Paine in southern Patagonia — small, rugged, and surrounded by the most dramatic landscapes on earth"},
+  "Hakuba, Japan":{"note":"Japanese Alps ski resort town with deep powder snow, ryokans, and a mountain culture unlike anything in the West"},
+  "Montpellier, France":{"note":"Southern French university city with Mediterranean climate, a huge student population, and a lively year-round outdoor culture"},
+  "Kraków, Poland":{"note":"Beautifully preserved medieval capital with the largest market square in Europe and a thriving student population"},
+  "Göttingen, Germany":{"note":"Small university town that produced more Nobel laureates per capita than almost anywhere else on earth"},
+  "Coimbra, Portugal":{"note":"Portugal's oldest university city on the Mondego River — traditional, literary, and beautifully unhurried"},
+  "Ghent, Belgium":{"note":"Medieval canal city with world-class food, a quieter vibe than Bruges, and one of Belgium's most livable atmospheres"},
+  "Heidelberg, Germany":{"note":"Germany's oldest university on the Neckar River — a romantic castle, student culture, and a preserved medieval old town"},
+  "Uppsala, Sweden":{"note":"Sweden's oldest university city — compact, rigorous, and an easy train ride from Stockholm"},
+  "Groningen, Netherlands":{"note":"Northern Dutch university city with a young population, excellent cycling infrastructure, and a relaxed pace"},
+  "Tübingen, Germany":{"note":"Medieval university town on the Neckar River — one of Germany's most picturesque and intellectually dense cities"},
+  "Salamanca, Spain":{"note":"Golden stone university city in Castile — one of Europe's oldest universities and most beautiful plazas"},
+  "Padua, Italy":{"note":"Home of Europe's second-oldest university and Giotto's Scrovegni Chapel — a proper Italian intellectual city"},
+  "Oaxaca, Mexico":{"note":"Colonial highland city with extraordinary indigenous craft traditions, mezcal culture, and the best food in Mexico"},
+  "Lviv, Ukraine":{"note":"Austro-Hungarian city in western Ukraine with cobblestones, legendary cafés, and a culture of remarkable resilience"},
+  "Évora, Portugal":{"note":"Walled Roman city in the Alentejo plains — ancient, slow, and strikingly beautiful without the tourist crowds"},
+  "Kanazawa, Japan":{"note":"Feudal castle city on the Sea of Japan coast — Kenroku-en garden, traditional crafts, and no crowds"},
+  "Guanajuato, Mexico":{"note":"Colorful colonial mining city built into a ravine with underground roads, pink stone architecture, and vibrant plazas"},
+  "Matera, Italy":{"note":"Ancient cave city in southern Italy — one of the oldest continuously inhabited settlements on earth and a UNESCO World Heritage site"},
+  "Cartagena, Colombia":{"note":"Walled Caribbean city with colonial architecture, warm water, salsa music, and a vibrant social scene"},
+  "San Cristóbal, Mexico":{"note":"Chiapas highland colonial town with indigenous markets, cobblestone streets, and a strong alternative community"},
+  "Valletta, Malta":{"note":"Europe's smallest capital — baroque architecture, harbor views, world-class food scene, and extraordinary history"},
+  "Sintra, Portugal":{"note":"Fairy-tale town in the hills west of Lisbon with romantic palaces, dense forest, and Atlantic views"},
+  "Colmar, France":{"note":"Alsatian town with half-timbered houses and canals that inspired the setting for Beauty and the Beast"},
+  "Hallstatt, Austria":{"note":"Village on a mountain lake so beautiful it was replicated in China — one of the most photographed places on earth"},
+  "Antibes, France":{"note":"Picasso's town on the French Riviera — a real working port beside one of Europe's largest yacht marinas"},
+  "Valencia, Spain":{"note":"Third largest Spanish city with year-round sun, the home of paella, and a relaxed Mediterranean pace"},
+  "Cali, Colombia":{"note":"Salsa capital of the world — warm, social, intensely musical, and the most underrated city in Colombia"},
+  "Split, Croatia":{"note":"Roman palace city on the Dalmatian coast — Diocletian's palace is still a living, breathing neighborhood"},
+  "Málaga, Spain":{"note":"Birthplace of Picasso on the Costa del Sol — reinvented as a cultural hub with excellent museums and a booming food scene"},
+  "Cape Town, South Africa":{"note":"City between mountain and ocean at the tip of Africa — extraordinary natural beauty and complex, fascinating culture"},
+  "Thessaloniki, Greece":{"note":"Greece's second city on the Aegean — the country's food capital, with a Byzantine heritage and a vibrant student scene"},
+  "Izmir, Turkey":{"note":"Turkey's most secular and liberal city on the Aegean — beautiful waterfront, excellent food, and a relaxed Mediterranean energy"},
+  "Da Nang, Vietnam":{"note":"Central Vietnam beach city between Hội An and Huế — rapidly growing but still affordable with excellent seafood"},
+  "Montevideo, Uruguay":{"note":"South America's most livable capital — relaxed, safe, culturally rich, and with a long Atlantic boardwalk"},
+  "Nicosia, Cyprus":{"note":"The world's last divided capital — a fascinating living history between two cultures with an excellent food scene"},
+  "Reykjavik, Iceland":{"note":"World's northernmost capital — volcanic landscapes, literary culture, Northern Lights, and a remarkably creative small city"},
+  "Ljubljana, Slovenia":{"note":"Car-free city center on a river with a castle above — compact, beautifully livable, and deeply unhurried"},
+  "Bruges, Belgium":{"note":"Perfectly preserved medieval canal city that somehow escaped the 20th century — one of Europe's most beautiful small cities"},
+  "Funchal, Madeira":{"note":"Atlantic island capital with subtropical gardens, levada walks, year-round mild weather, and dramatic coastal cliffs"},
+  "Chiang Rai, Thailand":{"note":"Northern Thai city near the Golden Triangle — quieter and more contemplative than Chiang Mai with White Temple and hill tribes"},
+  "Hoi An, Vietnam":{"note":"Lantern-lit ancient trading port on the Thu Bon River — UNESCO World Heritage, excellent tailors, and extraordinary food"},
+  "Bolzano, Italy":{"note":"South Tyrolean city where Italy meets Austria — Alpine setting, Germanic efficiency, Italian food, and trilingual culture"},
+  "Geneva, Switzerland":{"note":"International city of diplomacy, luxury watches, and the world's highest expat salaries on Lake Geneva"},
+  "Zurich, Switzerland":{"note":"Financial hub with exceptional quality of life, pristine lake, and a small but genuinely serious arts scene"},
+  "Luxembourg City":{"note":"EU's financial capital in a dramatic gorge — small, wealthy, and with surprisingly good quality of life"},
+  "Frankfurt, Germany":{"note":"Germany's financial capital with Europe's busiest airport — a serious business city that also has great museums"},
+  "Riyadh, Saudi Arabia":{"note":"Rapidly transforming Gulf capital with massive Vision 2030 investment in culture, entertainment, and infrastructure"},
+  "Stockholm, Sweden":{"note":"Scandinavian capital spread across 14 islands — design excellence, sustainability leadership, and a high quality of life"},
+  "Toronto, Canada":{"note":"One of the world's most diverse cities — a North American financial hub with world-class food and cultural institutions"},
+  "Hong Kong, China":{"note":"Vertical city between mountains and harbor — Asia's original global financial gateway with extraordinary food culture"},
+  "Monaco":{"note":"City-state on the French Riviera — the world's most dense concentration of wealth and the most famous tax haven"},
+  "Abu Dhabi, UAE":{"note":"UAE's capital with world-class museums including the Louvre Abu Dhabi, tax-free income, and ambitious cultural vision"},
+  "Doha, Qatar":{"note":"Gulf capital with extraordinary museums, zero income tax, and rapid modernization driven by gas wealth"},
+  "Singapore":{"note":"City-state with world-class infrastructure, zero income tax on foreign earnings, and a hub for the entire Asia-Pacific region"},
+  "Shenzhen, China":{"note":"Built from a fishing village in 40 years — now the hardware capital of the world and China's most innovative city"},
+  "Medellín, Colombia":{"note":"City of eternal spring that transformed from infamy to innovation — Latin America's most inspiring urban comeback story"},
+  "Chiang Mai, Thailand":{"note":"Northern Thailand mountain city with ancient temples, jungle surrounds, and the world's largest digital nomad community"},
+  "Luang Prabang, Laos":{"note":"UNESCO-listed former royal capital on the Mekong — saffron-robed monks, French colonial villas, and extraordinary calm"},
+  "Buenos Aires, Argentina":{"note":"Paris of South America — tango, steak, psychoanalysis, Borges, and a passionate European-inflected culture"},
+  "Beirut, Lebanon":{"note":"Phoenix city — extraordinary resilience, world-class food, a sophisticated intellectual culture, and an irrepressible energy"},
+  "Kyiv, Ukraine":{"note":"Eastern European capital with remarkable architecture, a deep cultural identity, and a spirit that has proven extraordinarily resilient"},
+  "Marseille, France":{"note":"Rough Mediterranean port city with the best bouillabaisse on earth and a genuinely ungentrified North African-French character"},
+  "Cape Town, South Africa":{"note":"Between mountain and ocean at the tip of Africa — extraordinary beauty, remarkable food, and profound cultural complexity"},
+  "Hvaratselia":{"note":"placeholder"},
+  "Playa del Carmen, Mexico":{"note":"Caribbean Riviera Maya town with turquoise water, cenotes, and a creative expat community alongside Mexican culture"},
+  "Mui Ne, Vietnam":{"note":"Vietnamese fishing village turned kite-surfing destination on the South China Sea with red and white sand dunes"},
+  "Varna, Bulgaria":{"note":"Bulgaria's sea capital on the Black Sea — Roman ruins, beach culture, and an affordable Balkan coastal lifestyle"},
+  "Trondheim, Norway":{"note":"Norway's third city on a fjord — medieval cathedral, NTNU university, and a relaxed northern character"},
+  "Turku, Finland":{"note":"Finland's oldest city at the mouth of the Aura River — strong student culture and gateway to the archipelago"},
+  "Pisa, Italy":{"note":"Beyond the tower — a real Italian university city on the Arno with Galileo's legacy and a genuine academic culture"},
+  "Bolzano, Italy":{"note":"Where Italy meets Austria in the Alps — trilingual, prosperous, and surrounded by dramatic Dolomite scenery"},
+  "Plovdiv, Bulgaria":{"note":"One of Europe's oldest cities with a compact Old Town arts district and a 2019 European Capital of Culture legacy"},
+};
+
+let intlCitiesActiveFilter='all';
+function openIntlCities(){
+  document.getElementById('intl-cities-panel').classList.add('open');
+  document.body.style.overflow='hidden';
+  renderIntlCities();
+}
+function closeIntlCities(){
+  document.getElementById('intl-cities-panel').classList.remove('open');
+  document.body.style.overflow='';
+}
+function renderIntlCities(){
+  const filterEl=document.getElementById('intlCitiesFilter');
+  filterEl.innerHTML=
+    `<button class="us-filter-pill us-filter-all${intlCitiesActiveFilter==='all'?' on':''}" onclick="filterIntlCities('all')">🌍 All Archetypes</button>`+
+    Object.entries(ARCHETYPES).map(([key,a])=>
+      `<button class="us-filter-pill${intlCitiesActiveFilter===key?' on':''}" onclick="filterIntlCities('${key}')">${a.emoji} ${a.name}</button>`
+    ).join('');
+  const keys=intlCitiesActiveFilter==='all'?Object.keys(INTL_CITIES):[intlCitiesActiveFilter];
+  document.getElementById('intlCitiesGrid').innerHTML=keys.map(key=>{
+    const arch=ARCHETYPES[key]; const data=INTL_CITIES[key];
+    if(!arch||!data) return '';
+    return `<div class="us-arch-card">
+      <div class="us-arch-header" id="ih-${key}" onclick="toggleIntlCard('${key}')">
+        <span class="us-arch-emoji">${arch.emoji}</span>
+        <div style="flex:1">
+          <div class="us-arch-name">${arch.name}</div>
+          <div class="us-arch-tagline">${data.tagline}</div>
+        </div>
+        <span class="us-arch-chevron">▾</span>
+      </div>
+      <div class="us-arch-body" id="ib-${key}">
+        <p class="us-arch-body-desc">${data.desc}</p>
+        <div class="us-city-section">
+          <p class="us-city-label" style="color:#4ade80">15 cities to discover</p>
+          <div class="us-city-tags">${data.discover.map(c=>intlTag(c,'discover')).join('')}</div>
+        </div>
+        <div class="us-city-section" style="margin-top:10px">
+          <p class="us-city-label" style="color:rgba(240,235,226,.4)">Familiar anchors</p>
+          <div class="us-city-tags">${data.anchor.map(c=>intlTag(c,'anchor')).join('')}</div>
+        </div>
+        <div class="us-city-section" style="margin-top:10px">
+          <p class="us-city-label" style="color:#ff6b6b">10 cities to reconsider</p>
+          ${data.reconsider_desc?`<p style="font-size:.78rem;font-weight:300;color:rgba(255,107,107,.65);line-height:1.65;margin-bottom:10px;font-style:italic">${data.reconsider_desc}</p>`:''}
+          <div class="us-city-tags">${data.reconsider.map(c=>intlTag(c,'reconsider')).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  if(intlCitiesActiveFilter!=='all') toggleIntlCard(intlCitiesActiveFilter,true);
+}
+function filterIntlCities(key){
+  intlCitiesActiveFilter=key;
+  renderIntlCities();
+  document.getElementById('intlCitiesGrid').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function toggleIntlCard(key,forceOpen=false){
+  const h=document.getElementById('ih-'+key);
+  const b=document.getElementById('ib-'+key);
+  if(!h||!b) return;
+  const open=b.classList.contains('open');
+  if(forceOpen||!open){h.classList.add('expanded');b.classList.add('open');}
+  else{h.classList.remove('expanded');b.classList.remove('open');}
+}
+function intlTag(city, type){
+  const info = INTL_CITY_INFO[city];
+  const cls = type==='discover' ? 'us-tag-discover' : type==='anchor' ? 'us-tag-anchor' : 'us-tag-reconsider';
+  const tip = info
+    ? `<span class="city-tooltip"><div class="city-tooltip-name">${city}</div><div class="city-tooltip-country">${city.includes(',')?city.split(',').slice(1).join(',').trim():'International'}</div><div class="city-tooltip-note">${info.note}</div></span>`
+    : '';
+  const tap = info ? `ontouchstart="toggleCityTip(event,this)"` : '';
+  return `<span class="${cls}" ${tap}>${city}${tip}</span>`;
+}
 (function buildArchGrid(){
   const grid = document.getElementById('archBrowseHome');
   if(!grid) return;
